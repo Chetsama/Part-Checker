@@ -1,17 +1,11 @@
 import re
 
+import numpy as np
+import pandas as pd
 import requests
+from scipy import stats
 
 from auth.auth import password, username
-
-
-def between(a, b, string):
-    try:
-        temp1 = re.split(a, string)
-        out = re.split(b, temp1[1])
-        return out[0]
-    except:
-        return "no value"
 
 
 def clean_price(price_value):
@@ -29,6 +23,7 @@ def clean_price(price_value):
             # If not a float, return the cleaned string
             return cleaned
     return price_value
+
 
 def get_prices_from_json(data):
     """
@@ -49,21 +44,48 @@ def get_prices_from_json(data):
 def get_price(item):
     # Structure payload.
     payload = {
-        "source": "google_search",
+        "source": "amazon_search",
         "query": "{}".format(item),
         "geo_location": "GB",
         "parse": True,
     }
 
     # Get response.
-    response = requests.request(
+    r = requests.request(
         "POST",
         "https://realtime.oxylabs.io/v1/queries",
         auth=(str(username), str(password)),
         json=payload,
     )
 
-    print(get_prices_from_json(response.json()))
+    print(r.headers.get("Content-Type"))
+    if "json" in str(r.headers.get("Content-Type")):
+        js = r.json()
+        # print(str(js))
+        prices = get_prices_from_json(js)
+        print(prices)
+        some_math(prices)
+    else:
+        print(r.status_code)
+
+
+def some_math(prices):
+    # remove values that deviate from a norm
+    # find
+    df = pd.DataFrame(data={"A": prices})
+    print(df)
+    df_nonzero = df[df["A"] > 0]
+
+    Q1 = df_nonzero["A"].quantile(0.25)
+    Q3 = df_nonzero["A"].quantile(0.75)
+    IQR = Q3 - Q1
+
+    df_clean = df_nonzero[
+        (df_nonzero["A"] >= Q1 - 1.5 * IQR) & (df_nonzero["A"] <= Q3 + 1.5 * IQR)
+    ]
+
+    print(df_clean.sort_values(by="A", ascending=False))
+    # print(remove_bogus_values)
 
 
 def main():
