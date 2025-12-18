@@ -1,3 +1,4 @@
+import argparse
 import re
 
 import numpy as np
@@ -6,6 +7,17 @@ import requests
 from scipy import stats
 
 from auth.auth import password, username
+
+# defined command line options
+# this also generates --help and error handling
+CLI = argparse.ArgumentParser()
+CLI.add_argument(
+    "--list",  # name on the CLI - drop the `--` for positional/required parameters
+    nargs="*",  # 0 or more values expected => creates a list
+    type=str,
+    default=["RTX5070", "64GB-DDR5-RAM"],  # default if nothing is provided
+)
+args = CLI.parse_args()
 
 
 def clean_price(price_value):
@@ -64,7 +76,8 @@ def get_price(item):
         # print(str(js))
         prices = get_prices_from_json(js)
         print(prices)
-        some_math(prices)
+        return prices
+
     else:
         print(r.status_code)
 
@@ -84,12 +97,25 @@ def some_math(prices):
         (df_nonzero["A"] >= Q1 - 1.5 * IQR) & (df_nonzero["A"] <= Q3 + 1.5 * IQR)
     ]
 
-    print(df_clean.sort_values(by="A", ascending=False))
+    sorted = df_clean.sort_values(by="A", ascending=False)
+    print(sorted)
+    retval = sorted["A"].max()
+    print(retval)
+
+    return retval
+
     # print(remove_bogus_values)
 
 
 def main():
-    get_price("RTX 5080")
+    total = 0
+    items = len(args.list)
+    for i in range(items):
+        prices = get_price(args.list[i])
+
+        total = total + some_math(prices)
+
+    print("Your entire computer should set you back no more than... £" + str(total))
 
 
 if __name__ == "__main__":
