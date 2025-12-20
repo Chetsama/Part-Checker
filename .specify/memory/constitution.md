@@ -1,50 +1,29 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Part Checker Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### Code Quality Standards
+All code must adhere to PEP 8 style guidelines with a maximum line length of 88 characters. Every function and class must include comprehensive docstrings following the Google Python Style Guide format. Code reviews are mandatory for all changes, with at least one reviewer required before merging. All new code must be accompanied by unit tests that achieve 90%+ coverage. Legacy code should be refactored incrementally to meet current standards.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### Testing Standards
+Test-first development is mandatory - tests must be written before implementation begins. Unit tests must cover all functions and classes with comprehensive test cases including edge cases. Integration tests are required for all major functionality flows and external API interactions. End-to-end tests are required for user-facing features. All tests must pass before code can be merged to the main branch. Performance tests should be included for any functions that process large amounts of data.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### User Experience Consistency
+All command-line interface output must follow consistent formatting patterns with clear, human-readable messages. Error messages must be descriptive and actionable, providing guidance on how to resolve issues. The tool should provide progress indicators during long-running operations. All user-facing functionality must be documented in the README with usage examples. CLI argument validation must be comprehensive with helpful error messages.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### Performance Requirements
+The tool must complete price fetching and analysis operations within 30 seconds for typical hardware configurations. Memory usage should not exceed 500MB during normal operation. The application must handle at least 10 concurrent price queries without significant performance degradation. All data processing functions must be optimized to minimize CPU usage. Response times for user interactions must be under 2 seconds for all operations.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+## Development Constraints
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+All code must be compatible with Python 3.8+ and must not introduce dependencies that require installation of system-level packages. The application must run without internet access once installed, except for initial setup. All external API calls must include proper error handling and fallback mechanisms. Data processing functions must be robust against malformed input data.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+All development work must follow the Git branching model with feature branches created from main. Pull requests must include passing tests, code review approval, and documentation updates. The main branch must always be in a deployable state. All commits must have descriptive messages that explain the "why" not just the "what". 
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other practices and development guidelines. Amendments require documentation of the change rationale, approval from at least two core maintainers, and a migration plan if applicable. All PRs/reviews must verify compliance with these principles. The constitution versioning follows semantic versioning: MAJOR for breaking changes, MINOR for new principles, PATCH for clarifications or minor updates.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.1.0 | **Ratified**: 2025-06-13 | **Last Amended**: 2025-12-20
