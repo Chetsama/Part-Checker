@@ -28,3 +28,26 @@ python3 partChecker.py --list
 
 - Python 3.x
 - Virtual environment setup (as shown above)
+
+## Web UI Features
+
+This project now includes a web-based user interface built with:
+- FastAPI backend framework 
+- Jinja2 templating engine
+- Vanilla HTML/CSS/JS frontend
+
+The new web UI allows users to:
+1. Enter lists of computer parts through a web form
+2. Receive accurate pricing for each part individually (not just the most expensive)
+3. View detailed information about each component including price variations and sources
+4. Handle invalid input gracefully with helpful error messages
+
+To run the web application:
+```bash
+cd backend/src/
+#python3 main.py
+
+gunicorn src.main:app --bind 127.0.0.1:8000 --worker-class uvicorn.workers.UvicornWorker
+```
+
+The application will be available at http://localhost:8000

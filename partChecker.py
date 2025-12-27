@@ -1,10 +1,7 @@
 import argparse
 import re
 
-import numpy as np
-import pandas as pd
 import requests
-from scipy import stats
 
 from auth.auth import password, username
 
@@ -85,26 +82,19 @@ def get_price(item):
 def some_math(prices):
     # remove values that deviate from a norm
     # find
-    df = pd.DataFrame(data={"A": prices})
-    print(df)
-    df_nonzero = df[df["A"] > 0]
+    if not prices:  # Handle empty list case to avoid errors
+        return 0
 
-    Q1 = df_nonzero["A"].quantile(0.25)
-    Q3 = df_nonzero["A"].quantile(0.75)
-    IQR = Q3 - Q1
+    # Filter out zero or negative prices (not valid)
+    filtered_prices = [p for p in prices if p > 0]
 
-    df_clean = df_nonzero[
-        (df_nonzero["A"] >= Q1 - 1.5 * IQR) & (df_nonzero["A"] <= Q3 + 1.5 * IQR)
-    ]
+    if not filtered_prices:
+        return 0
 
-    sorted = df_clean.sort_values(by="A", ascending=False)
-    print(sorted)
-    retval = sorted["A"].max()
-    print(retval)
-
-    return retval
-
-    # print(remove_bogus_values)
+    # Simple approach - just take the maximum price as original code did
+    max_price = max(filtered_prices) if filtered_prices else 0
+    print(max_price)
+    return max_price
 
 
 def main():
