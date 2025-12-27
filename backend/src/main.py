@@ -10,7 +10,23 @@ app = FastAPI()
 templates = Jinja2Templates(directory="frontend/src/templates")
 
 
-# Mock implementation of part price calculation logic from original partChecker.py
+# Import functions from partChecker.py to use actual API logic instead of mock values
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    # Try importing the auth module properly
+    from auth.auth import password, username
+except ImportError:
+    # Fallback to default credentials if needed for testing purposes (not secure in production)
+    password = "4M~ZlJbnplJ~~3"
+    username = "venomous_w4NVg"
+
+import requests
+
+
 def clean_price(price_value):
     """
     Cleans a price value by removing '£' and apostrophes, and converting to a numeric type.
@@ -46,15 +62,33 @@ def get_prices_from_json(data):
 
 def get_price(item: str) -> List[float]:
     """
-    Mock implementation that simulates getting price information for a part.
-    In the real application this would call external APIs or services.
+    Get price information for a part by calling the actual API.
+    This function replaces the mock implementation with real API calls.
     """
-    # This is a simplified mock - in reality, this function would make API calls to
-    # retrieve actual prices from sources like Amazon
-    import random
+    # Structure payload.
+    payload = {
+        "source": "amazon_search",
+        "query": "{}".format(item),
+        "geo_location": "GB",
+        "parse": True,
+    }
 
-    # Return some mock prices (simulating how partChecker.py worked)
-    return [round(100 + random.random() * 500, 2) for _ in range(random.randint(3, 8))]
+    # Get response.
+    r = requests.request(
+        "POST",
+        "https://realtime.oxylabs.io/v1/queries",
+        auth=(str(username), str(password)),
+        json=payload,
+    )
+
+    if "json" in str(r.headers.get("Content-Type")):
+        js = r.json()
+        prices = get_prices_from_json(js)
+        return prices
+
+    else:
+        print(r.status_code)
+        return []
 
 
 def calculate_part_price(prices: List[float]) -> float:
