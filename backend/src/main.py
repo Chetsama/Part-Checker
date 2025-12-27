@@ -4,10 +4,14 @@ from typing import Any, Dict, List
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 # Initialize the FastAPI app
 app = FastAPI()
 templates = Jinja2Templates(directory="frontend/src/templates")
+app.mount(
+    "/static", StaticFiles(directory="/mnt/c/Projects/PartChecker"), name="static"
+)
 
 
 # Import functions from partChecker.py to use actual API logic instead of mock values
