@@ -47,7 +47,7 @@ To run the web application:
 cd backend/src/
 #python3 main.py
 
-gunicorn src.main:app --bind 127.0.0.1:8000 --worker-class uvicorn.workers.UvicornWorker
+python -m uvicorn backend.src.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
 The application will be available at http://localhost:8000
