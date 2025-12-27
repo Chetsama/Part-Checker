@@ -45,7 +45,9 @@ The new web UI allows users to:
 To run the web application:
 ```bash
 cd backend/src/
-python3 main.py
+#python3 main.py
+
+gunicorn src.main:app --bind 127.0.0.1:8000 --worker-class uvicorn.workers.UvicornWorker
 ```
 
 The application will be available at http://localhost:8000

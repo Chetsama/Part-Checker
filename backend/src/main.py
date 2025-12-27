@@ -1,8 +1,9 @@
+import re
+from typing import Any, Dict, List
+
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from typing import List, Dict, Any
-import re
 
 # Initialize the FastAPI app
 app = FastAPI()
@@ -79,7 +80,7 @@ async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.post("/calculate")
+@app.post("/calculate", response_class=HTMLResponse)
 async def calculate_prices(request: Request, parts: str = Form(...)):
     try:
         # Split the input into individual parts
