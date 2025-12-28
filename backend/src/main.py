@@ -25,7 +25,7 @@ try:
     from auth.auth import password, username
 except ImportError:
     # Fallback to default credentials if needed for testing purposes (not secure in production)
-    password = "4M~ZlJbnplJ~~3"
+    password = "PASSWORD"
     username = "venomous_w4NVg"
 
 import requests
