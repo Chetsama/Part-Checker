@@ -32,7 +32,7 @@ python3 partChecker.py --list
 ## Web UI Features
 
 This project now includes a web-based user interface built with:
-- FastAPI backend framework 
+- Flask backend framework 
 - Jinja2 templating engine
 - Vanilla HTML/CSS/JS frontend
 
@@ -47,7 +47,7 @@ To run the web application:
 cd backend/src/
 #python3 main.py
 
-python -m uvicorn backend.src.main:app --reload --host 0.0.0.0 --port 8001
+python -m flask --app main.run
 ```
 
-The application will be available at http://localhost:8000
+The application will be available at http://localhost:5000

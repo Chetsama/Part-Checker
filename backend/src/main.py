@@ -1,24 +1,12 @@
 import re
 from typing import Any, Dict, List
-
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
-# Initialize the FastAPI app
-app = FastAPI()
-templates = Jinja2Templates(directory="frontend/src/templates")
-app.mount(
-    "/static", StaticFiles(directory="/mnt/c/Projects/PartChecker"), name="static"
-)
-
-
-# Import functions from partChecker.py to use actual API logic instead of mock values
 import sys
 import os
 
+# Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Import functions from partChecker.py to use actual API logic instead of mock values
 
 try:
     # Try importing the auth module properly
@@ -29,6 +17,14 @@ except ImportError:
     username = "venomous_w4NVg"
 
 import requests
+from flask import Flask, render_template, request
+
+# Initialize the Flask app with proper static folder configuration
+app = Flask(
+    __name__,
+    template_folder="../../frontend/src/templates",
+    static_folder="../../frontend/src/static",
+)
 
 
 def clean_price(price_value):
@@ -113,25 +109,25 @@ def calculate_part_price(prices: List[float]) -> float:
     return round(max_price, 2)
 
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+@app.route("/", methods=["GET"])
+def read_root():
+    return render_template("index.html")
 
 
-@app.post("/calculate", response_class=HTMLResponse)
-async def calculate_prices(request: Request, parts: str = Form(...)):
+@app.route("/calculate", methods=["POST"])
+def calculate_prices():
     try:
+        # Get the parts from form data
+        parts = request.form.get("parts", "")
+
+        if not parts.strip():
+            return render_template(
+                "index.html",
+                error="Please enter at least one computer part.",
+            )
+
         # Split the input into individual parts
         part_list = [p.strip() for p in parts.split("\n") if p.strip()]
-
-        if not part_list:
-            return templates.TemplateResponse(
-                "index.html",
-                {
-                    "request": request,
-                    "error": "Please enter at least one computer part.",
-                },
-            )
 
         results = []
         total_price = 0.0
@@ -155,26 +151,20 @@ async def calculate_prices(request: Request, parts: str = Form(...)):
                     {"part": part, "price": 0.0}
                 )  # Add zero price for failed parts
 
-        return templates.TemplateResponse(
+        return render_template(
             "index.html",
-            {
-                "request": request,
-                "results": results,
-                "total_price": round(total_price, 2),
-                "error": None,
-            },
+            results=results,
+            total_price=round(total_price, 2),
+            error=None,
         )
 
     except Exception as e:
-        return templates.TemplateResponse(
+        return render_template(
             "index.html",
-            {
-                "request": request,
-                "error": f"An error occurred during processing: {str(e)}",
-            },
+            error=f"An error occurred during processing: {str(e)}",
         )
 
 
 if __name__ == "__main__":
-    # This will not be used directly since we run with uvicorn
-    print("Backend server initialized")
+    # Run with Flask development server (without debug mode due to system limitations)
+    app.run(host="0.0.0.0", port=8000)
