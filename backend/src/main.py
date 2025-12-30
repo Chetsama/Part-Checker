@@ -1,23 +1,17 @@
-import re
-from typing import Any, Dict, List
-import sys
 import os
+import re
+import sys
+from typing import Any, Dict, List
 
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import functions from partChecker.py to use actual API logic instead of mock values
 
-try:
-    # Try importing the auth module properly
-    from auth.auth import password, username
-except ImportError:
-    # Fallback to default credentials if needed for testing purposes (not secure in production)
-    password = "PASSWORD"
-    username = "venomous_w4NVg"
-
 import requests
 from flask import Flask, render_template, request
+
+from auth.auth import password, username
 
 # Initialize the Flask app with proper static folder configuration
 app = Flask(
@@ -66,6 +60,7 @@ def get_price(item: str) -> List[float]:
     This function replaces the mock implementation with real API calls.
     """
     # Structure payload.
+
     payload = {
         "source": "amazon_search",
         "query": "{}".format(item),
@@ -73,13 +68,19 @@ def get_price(item: str) -> List[float]:
         "parse": True,
     }
 
+    print(payload)
+    print(username)
+    print(password)
+
     # Get response.
-    r = requests.request(
-        "POST",
+    r = requests.post(
         "https://realtime.oxylabs.io/v1/queries",
         auth=(str(username), str(password)),
         json=payload,
+        timeout=30,
     )
+
+    print(str(r.headers.get("Content-Type")))
 
     if "json" in str(r.headers.get("Content-Type")):
         js = r.json()
